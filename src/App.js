@@ -6,7 +6,7 @@ import ApiTest from './components/ApiTest'
 import Authentication from './components/Authentication'
 import {setCred} from './action/setcred'
 
-import edensdk from 'eden-js-sdk-client';
+import edensdk from 'edenchain-client-sdk';
 
 // initialize edensdk
 const isInited = edensdk.init(edensdk.EDENCHAIN_BETA_RELEASE);

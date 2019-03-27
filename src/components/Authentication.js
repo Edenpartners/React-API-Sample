@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import edensdk from 'eden-js-sdk-client';
-
+import edensdk from 'edenchain-client-sdk';
+import 'typeface-roboto';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 class Authentication extends Component {
     
@@ -31,7 +33,7 @@ class Authentication extends Component {
     // click signin button
     handleSignIn(e)  {        
         edensdk.app.auth()
-            .signInWithEmailAndPassword(this.refs.userid.value.trim(), this.refs.password.value.trim())
+            .signInWithEmailAndPassword(this.userid.value.trim(), this.password.value.trim())
             .catch((error) => {
                 alert(error);
              });
@@ -41,7 +43,7 @@ class Authentication extends Component {
     // click signup button
     handleSignUp(e)  {        
         edensdk.app.auth()
-            .createUserWithEmailAndPassword(this.refs.userid.value.trim(), this.refs.password.value.trim())           
+            .createUserWithEmailAndPassword(this.userid.value.trim(), this.password.value.trim())           
             .catch((error) => {
                 alert(error);
              });
@@ -59,18 +61,35 @@ class Authentication extends Component {
                 button = 
                 (
                     <div>
-                    <button onClick={(e) => this.handleSignOut(e)}>Logout</button>
+                    <Button variant="contained" color="default"  onClick={(e) => this.handleSignOut(e)}>Logout</Button>
                     </div>
                 )
         else
         {
             
             button = (
-                <div>                    
-                    <input type="text" placeholder="username" ref='userid'  ></input><br/>
-                    <input type="password" ref='password' placeholder='password' ></input> <br/>                
-                    <button onClick={(e) => this.handleSignUp(e)}>Signup to Edenchain</button>
-                    <button onClick={(e) => this.handleSignIn(e)}>SignIn to Edenchain</button>                    
+                <div>      
+
+                    <TextField
+                        id="standard-name"
+                        label="Name"
+                        margin="normal"
+                        inputRef={el => this.userid = el} 
+                        /> <br/>
+
+                    <TextField
+                        id="standard-password-input"
+                        label="Password"                        
+                        type="password"
+                        autoComplete="current-password"
+                        margin="normal"
+                        inputRef={el => this.password = el} 
+                        /> <br/>
+                    
+                     <br/>             
+                    <Button variant="contained" color="default" onClick={(e) => this.handleSignUp(e)}>Signup to Edenchain</Button>
+                    &nbsp;&nbsp;
+                    <Button variant="contained" color="primary" onClick={(e) => this.handleSignIn(e)}>SignIn to Edenchain</Button>                    
                 </div>
             );
         }

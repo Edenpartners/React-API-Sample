@@ -1,5 +1,17 @@
 import React, { Component } from 'react';
-import edensdk from 'eden-js-sdk-client';
+import edensdk from 'edenchain-client-sdk';
+import 'typeface-roboto';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+const style = {
+    margin: '16px'
+};
 
 /* Each API examples */
 class ApiGetCoinServerAddress extends Component{
@@ -18,10 +30,10 @@ class ApiGetCoinServerAddress extends Component{
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Request Coin Svr Address</button>
+            <div style={style}>
+                <Button  variant="contained" color="default"  onClick={ (e) => this.handleRequest(e) }>Request Coin Svr Address</Button>
                 {show}
             </div>
         )
@@ -43,10 +55,10 @@ class ApiGetUserBalance extends Component{
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Request User Balance</button>
+            <div style={style}>
+                <Button m={2} variant="contained" color="default"  onClick={ (e) => this.handleRequest(e) }>Request User Balance</Button>
                 {show}
             </div>
         )
@@ -70,10 +82,10 @@ class ApiGetUserInfo extends Component{
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Request User Info</button>
+            <div style={style}>
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Request User Info</Button>
                 {show}
             </div>
         )
@@ -97,10 +109,10 @@ class ApiGetUserTransactions extends Component{
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Request User Transactions</button>
+            <div style={style}>
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Request User Transactions</Button>
                 {show}
             </div>
         )
@@ -112,15 +124,26 @@ class ApiAddEthAddress extends Component{
     constructor(props)
     {
         super(props);
-        this.state = {text:""};
+        this.state = {text:"",open:false};
 
     }
 
-    async handleRequest(){
+    async handleRequest(){ 
+        this.setState({open:true});
+    }
 
-        let address_object = edensdk.utils.makeAddressObject('0x7ab5e1487bb8ff6353778edca5745c0421df9df825862fca01a36b582f3b8a88');
+     handleSubmit = async ()=>{
+
+        if(this.privatekey.value.trim().length===0)
+        {
+            this.setState({open:false,text:'Private key cannot be empty'});
+            return;
+        }
+        let address_object = edensdk.utils.makeAddressObject(this.privatekey.value.trim());
 
         let response = await edensdk.apis.addEthAddress(this.props.token,address_object);
+
+        this.setState({open:false});
 
         if(response)
             this.setState({text:"SUCCESS"});
@@ -128,13 +151,45 @@ class ApiAddEthAddress extends Component{
             this.setState({text:"FAILED"});
     }
 
+    handleClose = () =>{
+        this.setState({open:false});
+    }
+
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Add Eth Address</button>
+            <div style={style}>
+                 <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                        aria-labelledby="form-dialog-title"   >
+                    <DialogTitle id="form-dialog-title">Input private key</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Input Ethereum Private key to Add to account. <br/>
+                        Sample Key is 0x7ab5e1487bb8ff6353778edca5745c0421df9df825862fca01a36b582f3b8a88
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="ethkey"
+                        label="Ethereum Private Key"
+                        inputRef={el => this.privatekey = el} 
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={this.handleSubmit} color="primary">
+                        Submit
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Add Eth Address</Button>
                 {show}
             </div>
         )
@@ -147,28 +202,73 @@ class ApiDelEthAddress extends Component{
     constructor(props)
     {
         super(props);
-        this.state = {text:""};
+        this.state = {text:"",open:false};
 
     }
 
-    async handleRequest(){
-       
-        let address_object = edensdk.utils.makeAddressObject('0x7ab5e1487bb8ff6353778edca5745c0421df9df825862fca01a36b582f3b8a88');
+    async handleRequest(){ 
+        this.setState({open:true});
+    }
+
+     handleSubmit = async ()=>{
+
+        if(this.privatekey.value.trim().length===0)
+        {
+            this.setState({open:false,text:'Private key cannot be empty'});
+            return;
+        }
+        let address_object = edensdk.utils.makeAddressObject(this.privatekey.value.trim());
 
         let response = await edensdk.apis.delEthAddress(this.props.token,address_object);
+
+        this.setState({open:false});
+
         if(response)
             this.setState({text:"SUCCESS"});
         else
             this.setState({text:"FAILED"});
     }
 
+    handleClose = () =>{
+        this.setState({open:false});
+    }
+
+
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Del Eth Address</button>
+            <div style={style}>
+                <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                        aria-labelledby="form-dialog-title"   >
+                    <DialogTitle id="form-dialog-title">Input private key</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Input Ethereum Private key to Delete from account.<br/>
+                        Sample Key is 0x7ab5e1487bb8ff6353778edca5745c0421df9df825862fca01a36b582f3b8a88
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="ethkey"
+                        label="Ethereum Private Key"
+                        inputRef={el => this.privatekey = el} 
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={this.handleSubmit} color="primary">
+                        Submit
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Del Eth Address</Button>
                 {show}
             </div>
         )
@@ -182,25 +282,70 @@ class ApiDepositToken extends Component{
     constructor(props)
     {
         super(props);
-        this.state = {text:""};
+        this.state = {text:"",open:false};
 
     }
 
-    async handleRequest(){
-        let response = await edensdk.apis.depositTokenToEdenChain(this.props.token,"0x123123");
+    async handleRequest(){ 
+        this.setState({open:true});
+    }
+
+    handleSubmit = async ()=>{
+
+        if(this.txhash.value.trim().length===0)
+        {
+            this.setState({open:false,text:'TX hash cannot be empty'});
+            return;
+        }
+        let response = await edensdk.apis.depositTokenToEdenChain(this.props.token,this.txhash.value.trim());
+
+        this.setState({open:false});
+
         if(response)
             this.setState({text:"SUCCESS"});
         else
             this.setState({text:"FAILED"});
     }
 
+    handleClose = () =>{
+        this.setState({open:false});
+    }
+
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Deposit Token to Edenchain</button>
+            <div style={style}>
+                <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                        aria-labelledby="form-dialog-title"   >
+                    <DialogTitle id="form-dialog-title">Input transaction hash for deposit</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Input Ethereum Transaction Hash value.<br/>                        
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="txhash"
+                        label="Ethereum Transaction hash"
+                        inputRef={el => this.txhash = el} 
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={this.handleSubmit} color="primary">
+                        Submit
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Deposit Token to Edenchain</Button>
                 {show}
             </div>
         )
@@ -211,25 +356,85 @@ class ApiWithdrawToken extends Component{
     constructor(props)
     {
         super(props);
-        this.state = {text:""};
+        this.state = {text:"",open:false};
 
     }
+    async handleRequest(){ 
+        this.setState({open:true});
+    }
 
-    async handleRequest(){
-        let response = await edensdk.apis.withdrawTokenFromEdenChain(this.props.token,"0x123123",10);
+    handleSubmit = async ()=>{
+
+        if(this.ethaddress.value.trim().length===0)
+        {
+            this.setState({open:false,text:'Eth Address cannot be empty'});
+            return;
+        }
+
+        if(this.amount.value.trim().length===0)
+        {
+            this.setState({open:false,text:'Amount cannot be empty'});
+            return;
+        }
+
+
+        let response = await edensdk.apis.withdrawTokenFromEdenChain(this.props.token,this.ethaddress.value.trim(),
+                this.amount.value.trim());
+
+        this.setState({open:false});
+
         if(response)
-            this.setState({text:"SUCCESS"});
+            this.setState({text:"TXHASH:"+response});
         else
             this.setState({text:"FAILED"});
+    }
+
+    handleClose = () =>{
+        this.setState({open:false});
     }
 
     render(){
         let show ;
         if(this.state.text!=="")
-            show = <span>{this.state.text}</span>
+            show = <span><br/>{this.state.text}</span>
         return (
-            <div>
-                <button onClick={ (e) => this.handleRequest(e) }>Withdraw Token from Edenchain</button>
+            <div style={style}>
+                <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                        aria-labelledby="form-dialog-title"   >
+                    <DialogTitle id="form-dialog-title">Input Ethereum Address and TEDN Amount for Withdraw to Ethereum Address</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Input Ethereum Address and Amount <br/>
+                        Ethereum Address must be checksum address, and Amount must be full-decimal for TEDN.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="ethaddress"
+                        label="Ethereum Address"
+                        inputRef={el => this.ethaddress = el} 
+                        fullWidth
+                    />
+                    <TextField                        
+                        margin="dense"
+                        id="amount"
+                        label="TEDN Amount"
+                        inputRef={el => this.amount = el} 
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={this.handleSubmit} color="primary">
+                        Submit
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Withdraw Token from Edenchain</Button>
                 {show}
             </div>
         )
@@ -244,7 +449,7 @@ class ApiTest extends Component {
         if(this.props.token)
         {
             return (
-                <div>
+                <div style={style}>
                     <ApiGetCoinServerAddress token={this.props.token}/>
                     <ApiGetUserBalance token={this.props.token}/>
                     <ApiGetUserInfo token={this.props.token}/>
@@ -260,5 +465,6 @@ class ApiTest extends Component {
             return <div/>
     }
 };
+
 
 export default ApiTest;
