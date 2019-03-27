@@ -128,3 +128,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+package-lock.json

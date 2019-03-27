@@ -6,7 +6,6 @@ function usercred(state = {} , action){
     switch(action.type){
         case SET_CRED: 
             return {
-                id:action.id,
                 token: action.token,
              };
         default:

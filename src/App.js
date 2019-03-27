@@ -9,7 +9,7 @@ import {setCred} from './action/setcred'
 import edensdk from 'eden-js-sdk-client';
 
 // initialize edensdk
-const isInited = edensdk.init(edensdk.EDEN_PROTOTYPE_NETWORK);
+const isInited = edensdk.init(edensdk.EDENCHAIN_BETA_RELEASE);
 
 // Default Root Component.
 class App extends Component {
@@ -21,7 +21,7 @@ class App extends Component {
       <div className="App">
           {
             isInited && 
-              <Authentication onAuthenticate={(id,token)=>dispatch(setCred(id,token))}/>
+              <Authentication onAuthenticate={(token)=>dispatch(setCred(token))}/>
           }
           {
             isInited === false &&
