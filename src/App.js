@@ -9,7 +9,7 @@ import {setCred} from './action/setcred'
 import edensdk from 'edenchain-client-sdk';
 
 // initialize edensdk
-const isInited = edensdk.init(edensdk.EDENCHAIN_BETA_RELEASE);
+const isInited = edensdk.init(edensdk.EDENCHAIN_CANDIDATE_RELEASE);
 
 // Default Root Component.
 class App extends Component {

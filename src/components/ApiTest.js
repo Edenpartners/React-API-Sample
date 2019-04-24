@@ -443,6 +443,96 @@ class ApiWithdrawToken extends Component{
 
 
 
+class ApiTransferToken extends Component{
+    constructor(props)
+    {
+        super(props);
+        this.state = {text:"",open:false};
+
+    }
+    async handleRequest(){ 
+        this.setState({open:true});
+    }
+
+    handleSubmit = async ()=>{
+
+        if(this.tedn_address.value.trim().length===0)
+        {
+            this.setState({open:false,text:'TEDN Address cannot be empty'});
+            return;
+        }
+
+        if(this.amount.value.trim().length===0)
+        {
+            this.setState({open:false,text:'Amount cannot be empty'});
+            return;
+        }
+
+
+        let response = await edensdk.apis.transferToken(this.props.token,this.tedn_address.value.trim(),
+                this.amount.value.trim());
+
+        this.setState({open:false});
+
+        if(response)
+            this.setState({text:"TXHASH:"+response});
+        else
+            this.setState({text:"FAILED"});
+    }
+
+    handleClose = () =>{
+        this.setState({open:false});
+    }
+
+    render(){
+        let show ;
+        if(this.state.text!=="")
+            show = <span><br/>{this.state.text}</span>
+        return (
+            <div style={style}>
+                <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                        aria-labelledby="form-dialog-title"   >
+                    <DialogTitle id="form-dialog-title">Input TEDN Address and TEDN Amount for Transfer to that TEDN Address</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Input TEDN Address and Amount <br/>
+                        Amount must be full-decimal for TEDN.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="ethaddress"
+                        label="TEDN Address"
+                        inputRef={el => this.tedn_address = el} 
+                        fullWidth
+                    />
+                    <TextField                        
+                        margin="dense"
+                        id="amount"
+                        label="TEDN Amount"
+                        inputRef={el => this.amount = el} 
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={this.handleSubmit} color="primary">
+                        Submit
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                <Button variant="contained" color="default" onClick={ (e) => this.handleRequest(e) }>Transfer TEDN Token to User</Button>
+                {show}
+            </div>
+        )
+    }
+}
+
+
 /* API Test Main  */
 class ApiTest extends Component {
     render(){
@@ -458,6 +548,7 @@ class ApiTest extends Component {
                     <ApiDelEthAddress token={this.props.token}/>
                     <ApiDepositToken token={this.props.token}/>
                     <ApiWithdrawToken token={this.props.token}/>
+                    <ApiTransferToken token={this.props.token} />
                 </div>
             );
         }
